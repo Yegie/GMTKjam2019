@@ -58,7 +58,7 @@ public class HexGrid : MonoBehaviour
     {
 
         if (radius < 2) radius = 2;
-        advancedMode = true;
+        advancedMode = false;
 
         realSize = radius * 2 - 1;
         model = new int[realSize, realSize];

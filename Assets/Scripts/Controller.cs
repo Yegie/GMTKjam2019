@@ -6,7 +6,7 @@ using UnityEngine;
 public class Controller : MonoBehaviour, IPointerClickHandler
 {
     private readonly float rate = 3.5f;
-    private readonly float snapVal = 0.013f;
+    private readonly float snapVal = 0.02f;
 
     private SpriteRenderer sr;
     private HexGrid hexGrid;
@@ -22,7 +22,6 @@ public class Controller : MonoBehaviour, IPointerClickHandler
     // Update is called once per frame
     void Update()
     {
-
         Color target;
         switch (hexGrid.model[x,y])
         {
@@ -42,13 +41,12 @@ public class Controller : MonoBehaviour, IPointerClickHandler
         }
         float r, g, b;
 
-        if (sr.color.r - target.r > snapVal)
+        if (Mathf.Abs(sr.color.r - target.r) > snapVal)
         {
-            r = sr.color.r - Time.deltaTime * rate;
-        }
-        else if (sr.color.r - target.r < snapVal)
-        {
-            r = sr.color.r + Time.deltaTime * rate;
+            if(sr.color.r > target.r)
+                r = sr.color.r - Time.deltaTime * rate;
+            else
+                r = sr.color.r + Time.deltaTime * rate;
         }
         else
         {
@@ -56,26 +54,25 @@ public class Controller : MonoBehaviour, IPointerClickHandler
         }
 
 
-        if (sr.color.g - target.g > snapVal)
+        if (Mathf.Abs(sr.color.g - target.g) > snapVal)
         {
-            g = sr.color.g - Time.deltaTime * rate;
+            if (sr.color.g > target.g)
+                g = sr.color.g - Time.deltaTime * rate;
+            else
+                g = sr.color.g + Time.deltaTime * rate;
         }
-        else if (sr.color.g - target.g < snapVal)
-        {
-            g = sr.color.g + Time.deltaTime * rate;
-        } else
+        else
         {
             g = target.g;
         }
 
 
-        if (sr.color.b - target.b > snapVal)
+        if (Mathf.Abs(sr.color.b - target.b) > snapVal)
         {
-            b = sr.color.b - Time.deltaTime * rate;
-        }
-        else if (sr.color.g - target.g < snapVal)
-        {
-            b = sr.color.b + Time.deltaTime * rate;
+            if (sr.color.b > target.b)
+                b = sr.color.b - Time.deltaTime * rate;
+            else
+                b = sr.color.b + Time.deltaTime * rate;
         }
         else
         {

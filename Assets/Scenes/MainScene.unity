@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hex: {fileID: 4335726924334525831, guid: 6c2c0e35ca2785549b1a8b0f99cf7ded, type: 3}
-  radius: 7
+  radius: 3
 --- !u!1 &726755125
 GameObject:
   m_ObjectHideFlags: 0
