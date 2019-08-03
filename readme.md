@@ -1,6 +1,6 @@
 # Hexo: One Color
 
-## Made by Sergey Maltsev for the 2019 GMTK Game Jam.
+Made by Sergey Maltsev for the 2019 GMTK Game Jam.
 
 Tips:
 Progress is not saved when relaunching the game.
