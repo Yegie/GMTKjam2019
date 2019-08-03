@@ -4,15 +4,55 @@ using UnityEngine;
 
 public class HexGrid : MonoBehaviour
 {
+    public static readonly Color COLOR_1 = new Color(1, 0, 0);
+    public static readonly Color COLOR_2 = new Color(0, 0, 1);
     public GameObject Hex;
     public int[,] model;
     public int radius;
+    private int realSize;
     private readonly float vOffset = 0.88f;
+
+    public void ClickOnTile(int x, int y)
+    {
+        for (int i = -1; i < 2; ++i)
+        {
+            for (int j = -1; j < 2; ++j)
+            {
+                if(
+                    x + i >= 0 &&
+                    x + i < realSize &&
+                    y + j >= 0 &&
+                    y + j < realSize
+                    )
+                {
+                    model[x + i, y + j] = Flip(model[x + i, y + j]);
+                }
+            }
+        }
+    }
+
+    private int Flip(int cur)
+    {
+        switch(cur)
+        {
+            case 1:
+                return 2;
+            case 2:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        model = new int[radius * 2 - 1, radius * 2 - 1];
+
+        if (radius < 2) radius = 2;
+
+        realSize = radius * 2 - 1;
+        model = new int[realSize, realSize];
+        Camera.main.orthographicSize = 1 + radius;
 
         GameObject bg = Instantiate(Hex, new Vector3(0,0,20), new Quaternion());
         bg.transform.localScale = new Vector3(radius*2 + 0.5f, radius * 2 + 0.5f, radius * 2 + 0.5f);
@@ -21,31 +61,56 @@ public class HexGrid : MonoBehaviour
         bg.name = "background";
         Destroy(bg.GetComponent<Controller>());
 
+        //Instantiate(Hex, new Vector3(), new Quaternion());
+        //for (int i = 1; i < radius; ++i)
+        //{
+        //    Instantiate(Hex, new Vector3(-i, 0, 0), new Quaternion());
+        //    Instantiate(Hex, new Vector3(i, 0, 0), new Quaternion());
+        //    for (int j = 0; j <= i + 3; ++j)
+        //    {
+        //        Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, (radius - i) * vOffset, 0), new Quaternion());
+        //        Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, -(radius - i) * vOffset, 0), new Quaternion());
+        //    }
+        //}
 
-        Instantiate(Hex, new Vector3(), new Quaternion());
-        if (radius < 2) radius = 2;
-        for(int i = 1; i < radius; ++i)
+        for (int i = 0; i < radius; ++i)
         {
-            Instantiate(Hex, new Vector3(-i, 0, 0), new Quaternion());
-            Instantiate(Hex, new Vector3(i, 0, 0), new Quaternion());
-            for(int j = 0; j <= i + 3; ++j)
+            if (i < radius-1)
             {
-                Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, (radius - i) * vOffset, 0), new Quaternion());
-                Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, -(radius - i) * vOffset, 0), new Quaternion());
+                for (int j = radius - 1 - i; j < realSize; ++j)
+                {
+                    model[i, j] = 1;
+                }
+
+                for (int j = 0; j < radius + i; ++j)
+                {
+                    model[realSize - 1 - i, j] = 1;
+                }
+            }
+            else
+            {
+                for (int j = 0; j < realSize; ++j)
+                {
+                    model[i, j] = 1;
+                }
             }
         }
 
-        for(int i = 0; i <= radius; ++i)
+        CreatePrefabs();
+    }
+
+    private void CreatePrefabs()
+    {
+        for (int i = 0; i < realSize; ++i)
         {
-            for(int j = 4-i; j < radius * 2 - 1; ++j)
+            for (int j = 0; j < realSize; ++j)
             {
-                if (i != radius)
+                if(model[i, j] != 0)
                 {
-                    model[0, j] = 1;
-                    model[radius - i - 1, j - 4 + i] = 1;
-                } else
-                {
-                    model[i, j] = 1;
+                    GameObject o = Instantiate(Hex, new Vector3(-((radius - 1) * 1.5f) + i * 0.5f + j, -(radius - i - 1) * vOffset, 0), new Quaternion());
+                    Controller c = o.GetComponent<Controller>();
+                    c.x = i;
+                    c.y = j;
                 }
             }
         }
