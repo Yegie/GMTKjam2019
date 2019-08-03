@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5225810171016835179}
   - component: {fileID: 42037538459169189}
   - component: {fileID: 4097162504260269897}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hexagon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed77d56d8a3154f47ac5d67cb339a7f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  x: 0
+  y: 0
 --- !u!58 &4097162504260269897
 CircleCollider2D:
   m_ObjectHideFlags: 0

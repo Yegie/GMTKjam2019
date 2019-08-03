@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour, IPointerClickHandler
 {
-    private readonly float rate = 3.5f;
+    private readonly float rate = 2.8f;
     private readonly float snapVal = 0.02f;
 
     private SpriteRenderer sr;

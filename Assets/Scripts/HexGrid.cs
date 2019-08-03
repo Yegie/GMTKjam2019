@@ -13,6 +13,9 @@ public class HexGrid : MonoBehaviour
     public int[,] model;
     bool advancedMode;
     public int radius;
+    private int level;
+    private int minDiff;
+    private int maxDiff;
     private int realSize;
 
     public void ClickOnTile(int x, int y)
@@ -56,36 +59,32 @@ public class HexGrid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        if (radius < 2) radius = 2;
+        level = 1;
+        minDiff = 1;
+        maxDiff = 2;
         advancedMode = false;
+        Generate();
+    }
+
+    public void Generate()
+    {
+
+        if (radius < 3) radius = 3;
 
         realSize = radius * 2 - 1;
         model = new int[realSize, realSize];
         Camera.main.orthographicSize = 1 + radius;
 
-        GameObject bg = Instantiate(Hex, new Vector3(0,0,20), new Quaternion());
-        bg.transform.localScale = new Vector3(radius*2 + 0.5f, radius * 2 + 0.5f, radius * 2 + 0.5f);
+        GameObject bg = Instantiate(Hex, new Vector3(0, 0, 20), new Quaternion());
+        bg.transform.localScale = new Vector3(radius * 2 + 0.5f, radius * 2 + 0.5f, radius * 2 + 0.5f);
         bg.transform.Rotate(new Vector3(0f, 0f, 90f));
         bg.GetComponent<SpriteRenderer>().color = Color.black;
         bg.name = "background";
         Destroy(bg.GetComponent<Controller>());
 
-        //Instantiate(Hex, new Vector3(), new Quaternion());
-        //for (int i = 1; i < radius; ++i)
-        //{
-        //    Instantiate(Hex, new Vector3(-i, 0, 0), new Quaternion());
-        //    Instantiate(Hex, new Vector3(i, 0, 0), new Quaternion());
-        //    for (int j = 0; j <= i + 3; ++j)
-        //    {
-        //        Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, (radius - i) * vOffset, 0), new Quaternion());
-        //        Instantiate(Hex, new Vector3(-(i + 3) / 2f + j, -(radius - i) * vOffset, 0), new Quaternion());
-        //    }
-        //}
-
         for (int i = 0; i < radius; ++i)
         {
-            if (i < radius-1)
+            if (i < radius - 1)
             {
                 for (int j = radius - 1 - i; j < realSize; ++j)
                 {
@@ -107,6 +106,38 @@ public class HexGrid : MonoBehaviour
         }
 
         CreatePrefabs();
+
+        Randomize(minDiff, maxDiff);
+
+    }
+
+    public void Reset()
+    {
+        GameObject[] pieces = GameObject.FindGameObjectsWithTag("GameBoard");
+        foreach (GameObject o in pieces)
+        {
+            Destroy(o);
+        }
+
+        ++level;
+        if (level % 2 == 0)
+        {
+            minDiff += 4;
+            maxDiff += 8;
+        }
+        if (level % 4 == 0)
+        {
+            ++radius;
+            minDiff = (int)(minDiff * 1.5f);
+            minDiff = (int)(maxDiff * 1.5f);
+        }
+        if (level == 14)
+        {
+            minDiff /= 3;
+            maxDiff /= 3;
+            radius -= 2;
+            advancedMode = true;
+        }
     }
 
     private void CreatePrefabs()
@@ -122,6 +153,23 @@ public class HexGrid : MonoBehaviour
                     c.x = i;
                     c.y = j;
                 }
+            }
+        }
+    }
+
+    private void Randomize(int min, int max)
+    {
+        int goal = Random.Range(min, max);
+        for(int i = 0; i < goal; ++i)
+        {
+            int x = Random.Range(0, realSize);
+            int y = Random.Range(0, realSize);
+            if (model[x, y] != 0)
+            {
+                ClickOnTile(x, y);
+            } else
+            {
+                --i;
             }
         }
     }
