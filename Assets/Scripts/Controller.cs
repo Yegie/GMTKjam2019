@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour, IPointerClickHandler
 {
-    private readonly float rate = 2.5f;
-    private readonly float snapVal = 0.015f;
+    private readonly float rate = 3.5f;
+    private readonly float snapVal = 0.013f;
 
     private SpriteRenderer sr;
     private HexGrid hexGrid;
@@ -22,7 +22,24 @@ public class Controller : MonoBehaviour, IPointerClickHandler
     // Update is called once per frame
     void Update()
     {
-        Color target = HexGrid.COLOR_1;
+
+        Color target;
+        switch (hexGrid.model[x,y])
+        {
+            case 1:
+                target = HexGrid.COLOR_1;
+                break;
+            case 2:
+                target = HexGrid.COLOR_2;
+                break;
+            case 3:
+                target = HexGrid.COLOR_3;
+                break;
+            default:
+                Debug.Log("Should not be reaching this default");
+                target = Color.black;
+                break;
+        }
         float r, g, b;
 
         if (sr.color.r - target.r > snapVal)
@@ -45,7 +62,7 @@ public class Controller : MonoBehaviour, IPointerClickHandler
         }
         else if (sr.color.g - target.g < snapVal)
         {
-            g = sr.color.g - Time.deltaTime * rate;
+            g = sr.color.g + Time.deltaTime * rate;
         } else
         {
             g = target.g;
@@ -58,7 +75,7 @@ public class Controller : MonoBehaviour, IPointerClickHandler
         }
         else if (sr.color.g - target.g < snapVal)
         {
-            b = sr.color.b - Time.deltaTime * rate;
+            b = sr.color.b + Time.deltaTime * rate;
         }
         else
         {
@@ -70,7 +87,9 @@ public class Controller : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log(hexGrid.model[x, y]);
         Debug.Log("Clicked " + x + ", " + y);
         hexGrid.ClickOnTile(x, y);
+        Debug.Log(hexGrid.model[x, y]);
     }
 }

@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class HexGrid : MonoBehaviour
 {
-    public static readonly Color COLOR_1 = new Color(1, 0, 0);
-    public static readonly Color COLOR_2 = new Color(0, 0, 1);
+    public static readonly Color COLOR_1 = Color.red;
+    public static readonly Color COLOR_2 = Color.blue;
+    public static readonly Color COLOR_3 = Color.green;
+    private readonly float vOffset = 0.88f;
+
     public GameObject Hex;
     public int[,] model;
+    bool advancedMode;
     public int radius;
     private int realSize;
-    private readonly float vOffset = 0.88f;
 
     public void ClickOnTile(int x, int y)
     {
@@ -25,7 +28,8 @@ public class HexGrid : MonoBehaviour
                     y + j < realSize
                     )
                 {
-                    model[x + i, y + j] = Flip(model[x + i, y + j]);
+                    if (!((i == -1 && j == -1) || (i == 1 && j == 1)))
+                        model[x + i, y + j] = Flip(model[x + i, y + j]);
                 }
             }
         }
@@ -38,6 +42,11 @@ public class HexGrid : MonoBehaviour
             case 1:
                 return 2;
             case 2:
+                if (advancedMode)
+                    return 3;
+                else
+                    return 1;
+            case 3:
                 return 1;
             default:
                 return 0;
@@ -49,6 +58,7 @@ public class HexGrid : MonoBehaviour
     {
 
         if (radius < 2) radius = 2;
+        advancedMode = true;
 
         realSize = radius * 2 - 1;
         model = new int[realSize, realSize];
