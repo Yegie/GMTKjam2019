@@ -66,7 +66,7 @@ public class Controller : MonoBehaviour, IPointerClickHandler
         sr = GetComponent<SpriteRenderer>();
         hexGrid = Camera.main.GetComponent<HexGrid>();
         sr.color = HexGrid.COLOR_BG;
-        rate = 1.1f;
+        rate = 0.34f;
         timeSinceInit = 0f;
     }
 
@@ -78,7 +78,7 @@ public class Controller : MonoBehaviour, IPointerClickHandler
             timeSinceInit += Time.deltaTime;
         } else
         {
-            rate = 2.4f;
+            rate = 1.23f;
         }
         Color target;
         switch (hexGrid.model[x,y])
@@ -96,8 +96,7 @@ public class Controller : MonoBehaviour, IPointerClickHandler
                 target = HexGrid.COLOR_3;
                 break;
             default:
-                Debug.Log("Should not be reaching this default");
-                target = Color.white;
+                target = HexGrid.COLOR_FAIL;
                 break;
         }
 

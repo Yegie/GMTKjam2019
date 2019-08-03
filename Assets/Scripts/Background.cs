@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Background : MonoBehaviour
 {
-    private readonly float rate = 0.85f;
+    private readonly float rate = 0.34f;
     private readonly float snapVal = 0.015f;
     private SpriteRenderer sr;
 

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class HexGrid : MonoBehaviour
 {
-    public static readonly Color COLOR_1 = Color.red;
-    public static readonly Color COLOR_2 = Color.blue;
-    public static readonly Color COLOR_3 = Color.green;
-    public static readonly Color COLOR_BG = Color.black;
+    public static readonly Color COLOR_1 = new Color32(0xf9, 0xe1, 0xe0, 0xff);
+    public static readonly Color COLOR_2 = new Color32(0xfe, 0xad, 0xb9, 0xff);
+    public static readonly Color COLOR_3 = new Color32(0xbc, 0x85, 0xa3, 0xff);
+    public static readonly Color COLOR_BG = new Color32(0x89, 0xae, 0xb2, 0xff);
+    public static readonly Color COLOR_FAIL = new Color32(0x00, 0x00, 0x00, 0xff);
     private readonly float vOffset = 0.88f;
 
     public GameObject Hex;
@@ -42,7 +43,7 @@ public class HexGrid : MonoBehaviour
 
         if (active)
         {
-            CheckWin();
+            CheckWin(true);
         }
     }
 
@@ -64,7 +65,7 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    private void CheckWin()
+    private bool CheckWin(bool real)
     {
         bool won = false;
         int encountered = 0;
@@ -80,13 +81,14 @@ public class HexGrid : MonoBehaviour
                 } else if(won && (model[i, j] != encountered && model[i,j] != 0))
                 {
                     won = false;
-                    return;
+                    return won;
                 }
             }
         }
 
-        if (won)
+        if (won && real)
             StartCoroutine(Reset(encountered));
+        return won;
     }
 
     // Start is called before the first frame update
@@ -104,9 +106,9 @@ public class HexGrid : MonoBehaviour
     {
         int baseCol;
         if (advancedMode)
-            baseCol = Random.Range(0, 3);
+            baseCol = Random.Range(1, 4);
         else
-            baseCol = Random.Range(0, 2);
+            baseCol = Random.Range(1, 3);
 
         if (radius < 3) radius = 3;
 
@@ -166,36 +168,48 @@ public class HexGrid : MonoBehaviour
             case 3:
                 bgScript.target = COLOR_3;
                 break;
+            default:
+                bgScript.target = COLOR_FAIL;
+                break;
+        }
+        for (int i = 0; i < realSize; ++i)
+        {
+            for (int j = 0; j < realSize; ++j)
+            {
+                model[i, j] = cur;
+            }
         }
         yield return new WaitForSeconds(2.3f);
-        GameObject[] pieces = GameObject.FindGameObjectsWithTag("GameBoard");
-        foreach (GameObject o in pieces)
+        GameObject[] tiles = GameObject.FindGameObjectsWithTag("GameBoard");
+        foreach(GameObject o in tiles)
         {
             Destroy(o);
         }
         bgScript.target = COLOR_BG;
         yield return new WaitForSeconds(1.55f);
         Destroy(bg);
-        ++level;
-        if (level % 2 == 0)
+        if (cur > -2)
         {
-            minDiff += 1;
-            maxDiff += 2;
+            ++level;
+            if (level % 2 == 0)
+            {
+                minDiff += 1;
+                maxDiff += 2;
+            }
+            if (level % 4 == 0)
+            {
+                ++radius;
+                minDiff = (int)(minDiff * 1.2f);
+                minDiff = (int)(maxDiff * 1.2f);
+            }
+            if (level == 14)
+            {
+                minDiff /= 3;
+                maxDiff /= 3;
+                radius -= 3;
+                advancedMode = true;
+            }
         }
-        if (level % 4 == 0)
-        {
-            ++radius;
-            minDiff = (int)(minDiff * 1.2f);
-            minDiff = (int)(maxDiff * 1.2f);
-        }
-        if (level == 22)
-        {
-            minDiff /= 3;
-            maxDiff /= 3;
-            radius -= 3;
-            advancedMode = true;
-        }
-
         Generate();
     }
 
@@ -231,10 +245,23 @@ public class HexGrid : MonoBehaviour
                 --i;
             }
         }
+        if (CheckWin(false))
+        {
+            Randomize(min, max);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (active && Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("Reset level");
+            StartCoroutine(Reset(-2));
+        }
+        if (active && Input.GetKeyDown(KeyCode.S))
+        {
+            Debug.Log("Skipped level");
+            StartCoroutine(Reset(-1));
+        }
     }
 }
