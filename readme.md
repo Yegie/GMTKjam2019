@@ -1,6 +1,8 @@
 # Hexo: One Color
 
-Made by Sergey Maltsev for the 2019 GMTK Game Jam.
+Made by Sergey Maltsev for the 2019 GMTK Game Jam.  
+
+A compiled, ready to play version can be found at: https://yegie.itch.io/hexo-one-color
 
 Tips:  
 Progress is not saved when relaunching the game.  
